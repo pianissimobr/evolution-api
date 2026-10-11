@@ -307,6 +307,19 @@ cp .env.example .env
 export DATABASE_PROVIDER=postgresql  # or mysql
 ```
 
+### Cloud Agent local stack
+
+Cloud Agents start PostgreSQL 16 and Redis on the VM, apply Prisma migrations, and run `npm run dev:server` on port 8080. The root `docker-compose.yaml` is not that stack: it expects an external `dokploy-network`.
+
+The gitignored `.env` is generated from `.env.example` with these local values:
+
+- `DATABASE_PROVIDER=postgresql`
+- `DATABASE_CONNECTION_URI=postgresql://evolution:evolution@127.0.0.1:5432/evolution_db?schema=evolution_api`
+- `CACHE_REDIS_URI=redis://127.0.0.1:6379/6`
+- `AUTHENTICATION_API_KEY=local-dev-evolution-api-key`
+
+`GET /` returns the welcome payload. Create a Baileys instance with `POST /instance/create`, header `apikey: local-dev-evolution-api-key`, and body `{"instanceName":"<name>","integration":"WHATSAPP-BAILEYS","qrcode":false}`. List it with `GET /instance/fetchInstances`.
+
 ### Security Best Practices
 - **API key authentication** via `apikey` header
 - **Input validation** with JSONSchema7
